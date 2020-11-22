@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Header } from "./components/Header";
+import { StyledWrapper } from "./StyledApp";
+import GameStage from "./screens/GameStage";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { GameStateProvider } from "./context/gameState";
 
-function App() {
+const link = new WebSocketLink({
+  uri: `ws://localhost:4000/`,
+  options: {
+    reconnect: true,
+  },
+});
+
+const client = new ApolloClient({
+  link,
+  cache: new InMemoryCache(),
+  uri: "http://localhost:4000",
+});
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <GameStateProvider>
+        <div className="App">
+          <Header />
+          <StyledWrapper>
+            <GameStage />
+          </StyledWrapper>
+        </div>
+      </GameStateProvider>
+    </ApolloProvider>
   );
-}
+};
 
 export default App;
