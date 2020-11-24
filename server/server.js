@@ -1,6 +1,7 @@
 const { GraphQLServer, PubSub } = require("graphql-yoga");
 
 const moves = [];
+let initNumber;
 
 const typeDefs = `
   type Move {
@@ -14,9 +15,11 @@ const typeDefs = `
 
   type Query {
     moves: [Move!]
+    initNumber: Int
   }
 
   type Mutation {
+    createInitNumber(initNumber: Int): Int!
     makeMove(player: String!, result: Int!, calcString: String!, moveNumber: Int!): ID!
     deleteMoves(input: String): Boolean
   }
@@ -32,6 +35,7 @@ const onMovesUpdates = (fn) => subscribers.push(fn);
 const resolvers = {
   Query: {
     moves: () => moves,
+    initNumber: () => initNumber || 0,
   },
 
   Mutation: {
@@ -46,6 +50,12 @@ const resolvers = {
       moves.splice(0, moves.length);
       subscribers.forEach((fn) => fn());
       return true;
+    },
+
+    createInitNumber: (number) => {
+      initNumber = number || Math.floor(Math.random() * (999 - 100 + 1)) + 100;
+
+      return initNumber;
     },
   },
 

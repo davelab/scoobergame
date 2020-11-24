@@ -7,11 +7,24 @@ import {
   StyledStartGame,
 } from "./styles/StyledStartGame";
 import useGame from "../hooks/useGame";
+import { useMutation } from "@apollo/client";
+import { CREATE_INIT_NUMBER } from "../graphql/gql";
 
 const GameOver = () => {
   const { setGameState } = useContext(GameStateContext);
+  const [createInitNumber] = useMutation(CREATE_INIT_NUMBER);
   const [winner, setWinner] = useState("");
   const { moves } = useGame();
+
+  const resetInitNumber = async () => {
+    try {
+      await createInitNumber(0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => resetInitNumber(), []);
 
   useEffect(() => {
     if (moves.length) {
@@ -23,8 +36,6 @@ const GameOver = () => {
   const handleStartAgain = () => {
     setGameState(gameStates.GAME_IN_PROGRESS);
   };
-
-  console.log(winner);
 
   return (
     <StyledStartGame>

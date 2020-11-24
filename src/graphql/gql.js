@@ -12,6 +12,12 @@ export const GET_MOVES = gql`
   }
 `;
 
+export const GET_INIT_NUMBER = gql`
+  query {
+    initNumber
+  }
+`;
+
 export const MAKE_MOVE = gql`
   mutation(
     $player: String!
@@ -25,6 +31,12 @@ export const MAKE_MOVE = gql`
       moveNumber: $moveNumber
       calcString: $calcString
     )
+  }
+`;
+
+export const CREATE_INIT_NUMBER = gql`
+  mutation($initNumber: Int) {
+    createInitNumber(initNumber: $initNumber)
   }
 `;
 

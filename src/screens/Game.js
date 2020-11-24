@@ -7,21 +7,18 @@ import {
 } from "./styles/StyledGame";
 import MoveRow from "../components/MoveRow";
 import useGame from "../hooks/useGame";
+import useInitNumber from "../hooks/useInitNumber";
 import {
-  getInitNumber,
   getValidMoveNumber,
   possibleMoves,
   gameStates,
 } from "../gameUtilities";
-import GameOver from "./GameOver";
 import GameStateContext from "../context/gameState";
-
-let initNumber = 0;
 
 export const Game = () => {
   const bottomDivRef = React.useRef(null);
-
   const { setGameState } = useContext(GameStateContext);
+  const [initNumber, loading] = useInitNumber();
 
   const {
     handleMakeMove,
@@ -33,14 +30,11 @@ export const Game = () => {
   } = useGame();
 
   useEffect(() => {
-    // TODO generate random number from the GraphQL server
     deleteMoves();
-    initNumber = getInitNumber();
     setCurrentGameNumber(initNumber);
-  }, []);
+  }, [initNumber]);
 
   useEffect(() => {
-    console.log(currentGameNumber);
     if (currentGameNumber === 1) {
       setGameState(gameStates.GAME_OVER);
     }
@@ -58,12 +52,16 @@ export const Game = () => {
   return (
     <>
       <StyledContainer>
-        <h3>{initNumber}</h3>
-        <div>
-          {moves.map((move) => (
-            <MoveRow key={move.result} move={move} />
-          ))}
-        </div>
+        {!loading && (
+          <>
+            <h3>{initNumber}</h3>
+            <div>
+              {moves.map((move) => (
+                <MoveRow key={move.result} move={move} />
+              ))}
+            </div>
+          </>
+        )}
         <div ref={bottomDivRef} />
       </StyledContainer>
       <StyledFooter>
